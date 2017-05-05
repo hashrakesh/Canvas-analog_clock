@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clock in HTML n Canvas</title>
+  <style>
+    body {
+      background-color: #626262;
+      margin: 0;
+    }
+    .clock-outer {
+      left: calc(50% - 200px);
+      margin-bottom: 0;
+      margin-left: auto;
+      margin-right: auto;
+      position: absolute;
+      top: calc(50% - 200px);
+      width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock-outer">
+    <canvas id="canvas" width="400" height="400" style="background-color:#fff"></canvas>
+  </div>
+
+  <script>
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var radius = canvas.height / 2;
+    ctx.translate(radius, radius);
+    radius = radius * 0.8;
+    setInterval(drawClock, 1);
+
+    function drawClock() {
+      drawFace(ctx, radius);
+      drawSecondArc(ctx, radius);
+      drawNumbers(ctx, radius);
+      drawDots(ctx, radius);
+      drawName(ctx,radius);
+      drawTime(ctx, radius);
+      drawSmallCircle(ctx,radius);
+    }
+    function drawFace(ctx, radius) {
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#d9d9d9';
+      ctx.fill();
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 14;
+      ctx.stroke();
+    }
+    function drawSecondArc(ctx, radius) {
+      var now = new Date();
+      var second = now.getSeconds();
+
+      ctx.rotate(-Math.PI/2);
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, (Math.PI/30)*second);
+      ctx.rotate(Math.PI/2);
+      ctx.strokeStyle = "yellow";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    function drawName(ctx, radius) {
+      ctx.font = "100 " + radius*0.1 + "px arial";
+      ctx.fillText("SAMAY", 0, -radius+70);
+    }
+    function drawNumbers(ctx, radius) {
+      var ang;
+      var num;
+      var now = new Date();
+      var hour = now.getHours();
+      hour=hour%12;
+      ctx.font = "900 " + radius*0.15 + "px arial";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+      for(num = 1; num < 13; num++){
+        if(num == hour) { 
+          ctx.fillStyle = "red"; 
+        }
+        else { 
+          ctx.fillStyle = "#000"; 
+        }
+        ang = num * Math.PI / 6;
+        ctx.rotate(ang);
+        ctx.translate(0, -radius*0.8);
+        ctx.rotate(-ang);
+        ctx.fillText(num.toString(), 0, 0);
+        ctx.rotate(ang);
+        ctx.translate(0, radius*0.8);
+        ctx.rotate(-ang);
+      }
+    }
+    function drawDots(ctx, radius) {
+      var ang;
+      var num;
+      var now = new Date();
+      var hour = now.getHours();
+      var second = now.getSeconds();
+      hour=hour%12;
+
+      var length = 13;
+      for(num = 1; num < 61; num++){
+        if(num == second) { 
+          ctx.strokeStyle = "red"; 
+        }
+        else { 
+          ctx.strokeStyle = "#000"; 
+        }
+        ctx.lineWidth = 1;
+        ang = num * Math.PI / 30;
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(0, -(radius-length));
+        ctx.lineTo(0, -radius+7);
+        ctx.rotate(-ang);
+        ctx.stroke();
+      }
+      var length = 15;
+      for(num = 1; num < 13; num++){
+        if(num == hour) { 
+          ctx.strokeStyle="red"; 
+        }
+        else { 
+          ctx.strokeStyle = "#000"; 
+        }
+        ctx.lineWidth = 5;
+        ang = num * Math.PI / 6;
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(0, -(radius-length));
+        ctx.lineTo(0, -radius+7);
+        ctx.rotate(-ang);
+        ctx.stroke();
+      }
+    }
+    function drawTime(ctx, radius){
+      var now = new Date();
+      var hour = now.getHours();
+      var minute = now.getMinutes();
+      var second = now.getSeconds();
+      hour=hour%12;
+      //hour
+      hour=(hour*Math.PI/6)+(minute*Math.PI/(6*60))+(second*Math.PI/(360*60));
+      drawHand(ctx, hour, "red", radius*0.5, radius*0.07);
+      //minute
+      minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
+      drawHand(ctx, minute, "blue", radius*0.72, radius*0.05);
+      // second
+      second=(second*Math.PI/30);
+      drawHand(ctx, second, "yellow", radius*0.9, radius*0.01);
+    }
+    function drawHand(ctx, pos, color, length, width) {
+      ctx.beginPath();
+      ctx.lineWidth = width;
+      ctx.strokeStyle = color;
+      ctx.lineCap = "but";
+      ctx.moveTo(0,0);
+      ctx.rotate(pos);
+      ctx.lineTo(0, -length);
+      ctx.stroke();
+      ctx.rotate(-pos);
+    }
+    function drawSmallCircle(ctx, radius) {
+      ctx.beginPath();
+      ctx.arc(0, 0, radius*0.06, 0, 2*Math.PI);
+      ctx.fillStyle = '#000';
+      ctx.fill();
+    }
+</script>
+
+</body>
+</html>
